@@ -4,5 +4,5 @@ Permet de télécharger un fichier distant, en mémoire, puis d'en écrire le co
 
 
 ```
-WebFileToADS.exe http;//myurl/myfichier.exe C:\mydir\mydestfile.txt:hidden
+WebFileToADS.exe http://myurl/myfichier.exe C:\mydir\mydestfile.txt:hidden
 ```
