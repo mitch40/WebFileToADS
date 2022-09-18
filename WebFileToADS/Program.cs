@@ -1,11 +1,10 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 
-namespace WebFileToADS
-{
     class Program
     {
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -26,13 +25,36 @@ namespace WebFileToADS
         {
             if (args.Length != 2)
             {
+
                 usage();
             }
-            else
+            else {
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            string url = args[0];
+            string destfile = args[1];
+
+            Console.WriteLine("PARAM URL: " + url);
+            Console.WriteLine("PARAM DESTFILE: " + destfile);
+
+            WebClient wc = new WebClient();
+
+            Console.WriteLine("Téléchargement des données: " + url);
+            
+            Byte[] datas = null;
+            try
             {
-                WebClient wc = new WebClient();
-                Byte[] datas = wc.DownloadData(args[0]);
-                CreateFileWithAlternateDataStream(args[1], datas);
+                datas = wc.DownloadData(url);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("error");
+                Console.WriteLine(ex.Message);
+            }
+
+
+            CreateFileWithAlternateDataStream(destfile, datas);
             }
 
         }
@@ -49,18 +71,29 @@ namespace WebFileToADS
 
             if (sfh.IsInvalid)
             {
+                Console.WriteLine("Error:");
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
-
-            using (FileStream fs = new FileStream(sfh, FileAccess.Write))
+            
+            Console.WriteLine("Ecriture de l'ADS");
+            try
             {
+                FileStream fs = new FileStream(sfh, FileAccess.Write);
+            
                 fs.Write(datas, 0, datas.Length);
+                Console.WriteLine("Datas written");
+                Console.WriteLine("Fermeture des flux");
+                fs.Close();
+                sfh.Close();
+           
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
-            sfh.Close();
         }
     }
-}
 
 [Flags]
 enum EFileAccess : uint
