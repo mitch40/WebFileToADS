@@ -46,6 +46,7 @@ using System.Runtime.InteropServices;
             try
             {
                 datas = wc.DownloadData(url);
+                Console.WriteLine("Datas downlaoded");
             }
             catch(Exception ex)
             {
@@ -72,6 +73,7 @@ using System.Runtime.InteropServices;
             if (sfh.IsInvalid)
             {
                 Console.WriteLine("Error:");
+            Console.WriteLine(Marshal.GetLastWin32Error().ToString());
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
             
